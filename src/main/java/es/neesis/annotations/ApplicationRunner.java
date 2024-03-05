@@ -1,28 +1,26 @@
 package es.neesis.annotations;
 
-import es.neesis.annotations.applications.AutowiredApplication;
-import es.neesis.annotations.applications.ConstructorApplication;
-import es.neesis.annotations.applications.NewApplication;
+import es.neesis.annotations.applications.CalculatorApp;
 import es.neesis.annotations.configuration.AppConfig;
+import es.neesis.annotations.ui.UIPresenter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ApplicationRunner {
 
-    public static void main(String[] args) {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        System.out.println("Ejecución con inyección de dependencias usando new");
-        NewApplication application = new NewApplication();
-        application.sendMail("sergio@devanddel.com","Recordatorio","Recuerda que tienes que hacer el ejercicio de hoy.");
-        System.out.println("--------------------");
+  public static void main(String[] args) {
+    AnnotationConfigApplicationContext context =
+        new AnnotationConfigApplicationContext(AppConfig.class);
 
-        System.out.println("Ejecución con inyección de dependencias usando constructor");
-        ConstructorApplication constructorApplication = context.getBean(ConstructorApplication.class);
-        constructorApplication.sendMail("sergio@devanddel.com","Recordatorio","Recuerda que tienes que hacer el ejercicio de hoy.");
-        System.out.println("--------------------");
-
-        System.out.println("Ejecución con inyección de dependencias usando @Autowired");
-        AutowiredApplication autowiredApplication = context.getBean(AutowiredApplication.class);
-        autowiredApplication.sendMail("sergio@devanddel.com","Recordatorio","Recuerda que tienes que hacer el ejercicio de hoy.");
-        System.out.println("--------------------");
+    // Inyección de depedendecias mediante constructor
+    CalculatorApp application = context.getBean(CalculatorApp.class);
+    boolean isActive = true;
+    while (isActive) {
+      UIPresenter.showUI();
+      try {
+        isActive = application.ejecutar(UIPresenter.getCommand());
+      } catch (RuntimeException runtimeException) {
+        System.err.println(runtimeException.getMessage());
+      }
     }
+  }
 }
